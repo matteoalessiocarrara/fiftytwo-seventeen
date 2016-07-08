@@ -18,7 +18,7 @@ signals:
     void progressChanged(int percent);
     void remainingMinutesUpdated(int min);
     void remainingSecondsUpdated(int sec);
-    void statusChanged(QString status);
+    void statusChanged(QString status, bool showMsgbox=false);
 
 public slots:
     void stopTimer();
@@ -43,7 +43,7 @@ public slots:
     void onProgressChanged(int percent);
     void onRemainingMinutesUpdated(int min);
     void onRemainingSecondsUpdated(int sec);
-    void onStatusChanged(QString status);
+    void onStatusChanged(QString status, bool showMsgbox=false);
 
 private slots:
     void on_pushButton_clicked();

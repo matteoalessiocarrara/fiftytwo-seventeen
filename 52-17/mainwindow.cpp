@@ -3,6 +3,7 @@
 
 # include <ctime>
 # include <QThread>
+# include <QMessageBox>
 
 using std::time;
 using std::time_t;
@@ -24,13 +25,15 @@ TimerThread::run()
 {
     __timerEnabled = true;
 
+    emit statusChanged("Lavora, sfaticato che non sei altro!");
+
     while(true)
     {
-        //TODO Dialog
-        if(not __timerEnabled) break; emit statusChanged("Lavora, sfaticato che non sei altro!");
         if(not __timerEnabled) break; startTimer(52);
-        if(not __timerEnabled) break; emit statusChanged("Ora puoi riposarti un POCO");
+        if(not __timerEnabled) break; emit statusChanged("Ora puoi riposarti un POCO", true);
         if(not __timerEnabled) break; startTimer(17);
+        if(not __timerEnabled) break; emit statusChanged("Lavora, sfaticato che non sei altro!", true);
+
     }
 
     emit statusChanged("Timer non avviato");
@@ -94,8 +97,17 @@ MainWindow::onRemainingSecondsUpdated(int sec)
 
 
 void
-MainWindow::onStatusChanged(QString status)
+MainWindow::onStatusChanged(QString status, bool showMsgbox)
 {
+    if(showMsgbox)
+    {
+        // TODO Bloccare anche il thread chiamante
+        QMessageBox msgBox;
+        msgBox.setText(status);
+        msgBox.exec();
+    }
+
+
     ui->label->setText(status);
 }
 
@@ -105,7 +117,7 @@ void MainWindow::on_pushButton_clicked()
    timerThread = new TimerThread;
 
    connect(timerThread, SIGNAL(progressChanged(int)), SLOT(onProgressChanged(int)));
-   connect(timerThread, SIGNAL(statusChanged(QString)), SLOT(onStatusChanged(QString)));
+   connect(timerThread, SIGNAL(statusChanged(QString, bool)), SLOT(onStatusChanged(QString, bool)));
    connect(timerThread, SIGNAL(remainingMinutesUpdated(int)), SLOT(onRemainingMinutesUpdated(int)));
    connect(timerThread, SIGNAL(remainingSecondsUpdated(int)), SLOT(onRemainingSecondsUpdated(int)));
 
